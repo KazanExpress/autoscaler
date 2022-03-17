@@ -13,16 +13,16 @@ import (
 type provider struct {
 	token    string
 	folderID string
-	zones    []string
+	zone     []string
 	subnetID string
 
-	platformId string
+	platformID string
 	privateIP  bool
 
-	diskSize            int64
-	diskType            string
-	resourceCores       int64
-	resourceMemoryBytes int64
+	diskSize       int64
+	diskType       string
+	resourceCores  int64
+	resourceMemory int64
 
 	imageFolderID string
 	imageFamily   string
@@ -44,11 +44,11 @@ func New(opts ...Option) (autoscaler.Provider, error) {
 	if p.folderID == "" {
 		return nil, errors.New("folderID must be provided")
 	}
-	if len(p.zones) == 0 {
-		p.zones = []string{"ru-central1-a"}
-	}
 	if p.subnetID == "" {
 		return nil, errors.New("empty subnet id")
+	}
+	if len(p.zone) == 0 {
+		p.zone = []string{"ru-central1-a"}
 	}
 	if p.diskSize == 0 {
 		p.diskSize = 10 * 1024 * 1024 * 1024
@@ -59,11 +59,11 @@ func New(opts ...Option) (autoscaler.Provider, error) {
 	if p.resourceCores == 0 {
 		p.resourceCores = 2
 	}
-	if p.resourceMemoryBytes == 0 {
-		p.resourceMemoryBytes = 2 * 1024 * 1024 * 1024
+	if p.resourceMemory == 0 {
+		p.resourceMemory = 2 * 1024 * 1024 * 1024
 	}
-	if p.platformId == "" {
-		p.platformId = "standard-v3"
+	if p.platformID == "" {
+		p.platformID = "standard-v3"
 	}
 	if p.imageFolderID == "" {
 		p.imageFolderID = "standard-images"

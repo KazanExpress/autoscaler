@@ -17,7 +17,7 @@ func (p *provider) Create(ctx context.Context, opts autoscaler.InstanceCreateOpt
 	name := strings.ToLower(opts.Name)
 
 	// select random zone from the list
-	zone := p.zones[rand.Intn(len(p.zones))]
+	zone := p.zone[rand.Intn(len(p.zone))]
 
 	sourceImageID, err := p.getSourceImage(ctx)
 	if err != nil {
@@ -85,10 +85,10 @@ func (p *provider) createInstance(
 		FolderId:   folderID,
 		Name:       name,
 		ZoneId:     zone,
-		PlatformId: p.platformId,
+		PlatformId: p.platformID,
 		ResourcesSpec: &compute.ResourcesSpec{
 			Cores:  p.resourceCores,
-			Memory: p.resourceMemoryBytes,
+			Memory: p.resourceMemory,
 		},
 		BootDiskSpec: &compute.AttachedDiskSpec{
 			AutoDelete: true,

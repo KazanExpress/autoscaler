@@ -223,6 +223,20 @@ type (
 			UserData       string `envconfig:"DRONE_SCALEWAY_USERDATA"`
 			UserDataFile   string `envconfig:"DRONE_SCALEWAY_USERDATA_FILE"`
 		}
+
+		YandexCloud struct {
+			Token          string   `envconfig:"DRONE_YANDEX_CLOUD_TOKEN"`
+			FolderID       string   `envconfig:"DRONE_YANDEX_CLOUD_FOLDER_ID"`
+			SubnetID       string   `envconfig:"DRONE_YANDEX_CLOUD_SUBNET_ID"`
+			Zone           []string `envconfig:"DRONE_YANDEX_CLOUD_ZONE"`
+			DiskSize       int64    `envconfig:"DRONE_YANDEX_CLOUD_DISK_SIZE"`
+			DiskType       string   `envconfig:"DRONE_YANDEX_CLOUD_DISK_TYPE"`
+			ResourceCores  int64    `envconfig:"DRONE_YANDEX_CLOUD_RESOURCE_CORES"`
+			ResourceMemory int64    `envconfig:"DRONE_YANDEX_CLOUD_RESOURCE_MEMORY"`
+			PlatformID     string   `envconfig:"DRONE_YANDEX_CLOUD_PLATFORM_ID"`
+			ImageFolderID  string   `envconfig:"DRONE_YANDEX_CLOUD_IMAGE_FOLDER_ID"`
+			ImageFamily    string   `envconfig:"DRONE_YANDEX_CLOUD_IMAGE_FAMILY"`
+		}
 	}
 
 	Runner struct {

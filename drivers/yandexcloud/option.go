@@ -3,20 +3,81 @@ package yandexcloud
 // Option configures a Digital Ocean provider option.
 type Option func(*provider)
 
+// WithToken returns an option to set the token.
 func WithToken(token string) Option {
 	return func(p *provider) {
 		p.token = token
 	}
 }
 
+// WithFolderID returns an option to set the folder id.
+func WithFolderID(folderID string) Option {
+	return func(p *provider) {
+		p.folderID = folderID
+	}
+}
+
+// WithSubnetID returns an option to set the subnet id.
 func WithSubnetID(subnetID string) Option {
 	return func(p *provider) {
 		p.subnetID = subnetID
 	}
 }
 
-func WithFolderID(folderID string) Option {
+// WithZone returns an option to set the zone.
+func WithZone(zone []string) Option {
 	return func(p *provider) {
-		p.folderID = folderID
+		p.zone = zone
+	}
+}
+
+// WithDiskSize returns an option to set the disk
+// size in bytes.
+func WithDiskSize(diskSize int64) Option {
+	return func(p *provider) {
+		p.diskSize = diskSize
+	}
+}
+
+// WithDiskType returns an option to set the disk type.
+func WithDiskType(diskType string) Option {
+	return func(p *provider) {
+		p.diskType = diskType
+	}
+}
+
+// WithResourceCores returns an option to set the resource cores.
+func WithResourceCores(resourceCores int64) Option {
+	return func(p *provider) {
+		p.resourceCores = resourceCores
+	}
+}
+
+// WithResourceMemory returns an option to set the resource
+// memory in bytes.
+func WithResourceMemory(resourceMemory int64) Option {
+	return func(p *provider) {
+		p.resourceMemory = resourceMemory
+	}
+}
+
+// WithPlatformID returns an option to set the platform id.
+func WithPlatformID(platformID string) Option {
+	return func(p *provider) {
+		p.platformID = platformID
+	}
+}
+
+// WithImageFolderID returns an option to set the image folder id.
+func WithImageFolderID(imageFolderID string) Option {
+	return func(p *provider) {
+		p.imageFolderID = imageFolderID
+	}
+}
+
+// WithImageFamily returns an option to set the image family.
+func WithImageFamily(imageFamily string) Option {
+	return func(p *provider) {
+		p.imageFamily = imageFamily
 	}
 }
