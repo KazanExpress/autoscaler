@@ -6,12 +6,15 @@ import (
 	"fmt"
 
 	ycsdk "github.com/yandex-cloud/go-sdk"
+	"github.com/yandex-cloud/go-sdk/iamkey"
 
 	"github.com/drone/autoscaler"
 )
 
 type provider struct {
-	token    string
+	token              string
+	serviceAccountJSON string
+
 	folderID string
 	zone     []string
 	subnetID string
@@ -19,10 +22,12 @@ type provider struct {
 	platformID string
 	privateIP  bool
 
-	diskSize       int64
-	diskType       string
-	resourceCores  int64
-	resourceMemory int64
+	diskSize             int64
+	diskType             string
+	resourceCores        int64
+	resourceCoreFraction int64
+	resourceMemory       int64
+	preemptible          bool
 
 	imageFolderID string
 	imageFamily   string
@@ -31,15 +36,19 @@ type provider struct {
 }
 
 func New(opts ...Option) (autoscaler.Provider, error) {
-	var err error
+	var (
+		key         *iamkey.Key
+		credentials ycsdk.Credentials
+		err         error
+	)
 
 	p := new(provider)
 	for _, opt := range opts {
 		opt(p)
 	}
 
-	if p.token == "" {
-		return nil, errors.New("token must be provided")
+	if p.token == "" || p.serviceAccountJSON == "" {
+		return nil, errors.New("token or service account must be provided")
 	}
 	if p.folderID == "" {
 		return nil, errors.New("folderID must be provided")
@@ -71,10 +80,25 @@ func New(opts ...Option) (autoscaler.Provider, error) {
 	if p.imageFamily == "" {
 		p.imageFamily = "debian-9"
 	}
+	if p.resourceCoreFraction == 0 {
+		p.resourceCoreFraction = 100
+	}
 
-	p.service, err = ycsdk.Build(context.Background(), ycsdk.Config{
-		Credentials: ycsdk.OAuthToken(p.token),
-	})
+	if p.token != "" {
+		credentials = ycsdk.OAuthToken(p.token)
+	} else {
+		key, err = iamkey.ReadFromJSONBytes([]byte(p.serviceAccountJSON))
+		if err != nil {
+			return nil, fmt.Errorf("read service account json: %w", err)
+		}
+
+		credentials, err = ycsdk.ServiceAccountKey(key)
+		if err != nil {
+			return nil, fmt.Errorf("make service account credentials: %w", err)
+		}
+	}
+
+	p.service, err = ycsdk.Build(context.Background(), ycsdk.Config{Credentials: credentials})
 	if err != nil {
 		return nil, fmt.Errorf("init yandex cloud sdk: %w", err)
 	}

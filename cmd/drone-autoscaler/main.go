@@ -331,14 +331,17 @@ func setupProvider(c config.Config) (autoscaler.Provider, error) {
 			openstack.WithUserData(c.OpenStack.UserData),
 			openstack.WithUserDataFile(c.OpenStack.UserDataFile),
 		)
-	case c.YandexCloud.Token != "":
+	case c.YandexCloud.Token != "" || c.YandexCloud.ServiceAccount != "":
 		return yandexcloud.New(
 			yandexcloud.WithToken(c.YandexCloud.Token),
+			yandexcloud.WithServiceAccountJSON(c.YandexCloud.ServiceAccount),
 			yandexcloud.WithFolderID(c.YandexCloud.FolderID),
 			yandexcloud.WithSubnetID(c.YandexCloud.SubnetID),
 			yandexcloud.WithZone(c.YandexCloud.Zone),
 			yandexcloud.WithDiskSize(c.YandexCloud.DiskSize),
 			yandexcloud.WithDiskType(c.YandexCloud.DiskType),
+			yandexcloud.WithResourceCoreFraction(c.YandexCloud.ResourceCoreFraction),
+			yandexcloud.WithPreemptible(c.YandexCloud.Preemptible),
 			yandexcloud.WithResourceCores(c.YandexCloud.ResourceCores),
 			yandexcloud.WithResourceMemory(c.YandexCloud.ResourceMemory),
 			yandexcloud.WithPlatformID(c.YandexCloud.PlatformID),

@@ -87,8 +87,9 @@ func (p *provider) createInstance(
 		ZoneId:     zone,
 		PlatformId: p.platformID,
 		ResourcesSpec: &compute.ResourcesSpec{
-			Cores:  p.resourceCores,
-			Memory: p.resourceMemory,
+			Cores:        p.resourceCores,
+			Memory:       p.resourceMemory,
+			CoreFraction: p.resourceCoreFraction,
 		},
 		BootDiskSpec: &compute.AttachedDiskSpec{
 			AutoDelete: true,
@@ -108,6 +109,7 @@ func (p *provider) createInstance(
 				PrimaryV4AddressSpec: networkConfig,
 			},
 		},
+		SchedulingPolicy: &compute.SchedulingPolicy{Preemptible: p.preemptible},
 	}
 
 	op, err := p.service.Compute().Instance().Create(ctx, request)

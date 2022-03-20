@@ -10,6 +10,13 @@ func WithToken(token string) Option {
 	}
 }
 
+// WithServiceAccountJSON returns an option to set the token.
+func WithServiceAccountJSON(serviceAccount string) Option {
+	return func(p *provider) {
+		p.serviceAccountJSON = serviceAccount
+	}
+}
+
 // WithFolderID returns an option to set the folder id.
 func WithFolderID(folderID string) Option {
 	return func(p *provider) {
@@ -53,6 +60,13 @@ func WithResourceCores(resourceCores int64) Option {
 	}
 }
 
+// WithResourceCoreFraction returns an option to set the resource core fraction.
+func WithResourceCoreFraction(resourceCoreFraction int64) Option {
+	return func(p *provider) {
+		p.resourceCoreFraction = resourceCoreFraction
+	}
+}
+
 // WithResourceMemory returns an option to set the resource
 // memory in bytes.
 func WithResourceMemory(resourceMemory int64) Option {
@@ -79,5 +93,12 @@ func WithImageFolderID(imageFolderID string) Option {
 func WithImageFamily(imageFamily string) Option {
 	return func(p *provider) {
 		p.imageFamily = imageFamily
+	}
+}
+
+// WithPreemptible returns an options to set the preemptible.
+func WithPreemptible(preemptible bool) Option {
+	return func(p *provider) {
+		p.preemptible = preemptible
 	}
 }
