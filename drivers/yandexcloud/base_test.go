@@ -58,7 +58,7 @@ func (s *baseProviderSuite) SetupSuite() {
 
 	image, err := s.sdk.Compute().Image().GetLatestByFamily(noContext, &compute.GetImageLatestByFamilyRequest{
 		FolderId: "standard-images",
-		Family:   "debian-9",
+		Family:   "container-optimized-image",
 	})
 	s.NoError(err)
 	s.imageID = image.Id

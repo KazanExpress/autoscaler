@@ -78,7 +78,7 @@ func New(opts ...Option) (autoscaler.Provider, error) {
 		p.imageFolderID = "standard-images"
 	}
 	if p.imageFamily == "" {
-		p.imageFamily = "debian-9"
+		p.imageFamily = "container-optimized-image"
 	}
 	if p.resourceCoreFraction == 0 {
 		p.resourceCoreFraction = 100
