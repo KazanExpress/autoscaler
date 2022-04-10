@@ -47,7 +47,7 @@ func New(opts ...Option) (autoscaler.Provider, error) {
 		opt(p)
 	}
 
-	if p.token == "" || p.serviceAccountJSON == "" {
+	if p.token == "" && p.serviceAccountJSON == "" {
 		return nil, errors.New("token or service account must be provided")
 	}
 	if p.folderID == "" {
