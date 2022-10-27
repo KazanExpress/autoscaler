@@ -34,14 +34,14 @@ func newDockerClient(server *autoscaler.Server) (docker.APIClient, io.Closer, er
 	tlsConfig.RootCAs = x509.NewCertPool()
 	tlsConfig.RootCAs.AppendCertsFromPEM(server.CACert)
 	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: tlsConfig,
-		},
+		// Transport: &http.Transport{
+		// 	TLSClientConfig: tlsConfig,
+		// },
 	}
 	dockerClient, err := docker.NewClientWithOpts(
 	   docker.WithAPIVersionNegotiation(),
 	   docker.WithHTTPClient(client),
-	   docker.WithHost(fmt.Sprintf("https://%s:2376", server.Address)),
+	   docker.WithHost(fmt.Sprintf("http://%s:2375", server.Address)),
 	)
 	return dockerClient, dockerClient, err
 }
