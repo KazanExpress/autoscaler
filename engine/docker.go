@@ -9,7 +9,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io"
-	"net/http"
+	// "net/http"
 
 	docker "github.com/docker/docker/client"
 	"github.com/drone/autoscaler"
