@@ -88,7 +88,11 @@ func (p *provider) createInstance(
 	if p.dockerComposeMetadata != "" {
 		metadata["docker-compose"] = p.dockerComposeMetadata
 	}
-	metadata["user-data"]= "#cloud-config\nwrite_files:\n  - path: /etc/docker/daemon.json\n	content: |\n	  {\n		\"hosts\": [ \"0.0.0.0:2375\", \"unix:///var/run/docker.sock\" ]\n	  }\nruncmd:\n  - [ systemctl, daemon-reload ]\n  - [ systemctl, restart, docker ]"
+	metadata["user-data"]= `#cloud-config
+	runcmd:
+	 - export DOCKER_HOST=tcp://0.0.0.0:2375
+	 - [ systemctl, daemon-reload ]
+	 - [ systemctl, restart, docker.service ]`
 
 	request := &compute.CreateInstanceRequest{
 		FolderId:   folderID,
