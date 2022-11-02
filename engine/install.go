@@ -255,6 +255,8 @@ poller:
 	if err != nil {
 		i.metrics.IncrServerSetupError()
 		logger.WithField("image", i.image).
+			WithField("volumes", volumes).
+			WithField("mounts", mounts).
 			WithError(err).
 			Errorln("cannot create agent container")
 		return i.errorUpdate(ctx, instance, err)
