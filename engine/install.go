@@ -207,9 +207,9 @@ poller:
 			Type:   mount.TypeNamedPipe,
 		})
 	default:
-		volumes = append(volumes,
-			"/var/run/docker.sock:/var/run/docker.sock",
-		)
+		// volumes = append(volumes,
+		// 	"/var/run/docker.sock:/var/run/docker.sock",
+		// )
 
 		// if memory serves me correctly, we need to explicitly
 		// set this to nil to ensure the json representation
