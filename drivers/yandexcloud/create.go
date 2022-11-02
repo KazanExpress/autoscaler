@@ -90,9 +90,10 @@ func (p *provider) createInstance(
 	}
 	metadata["user-data"] = `#cloud-config
 runcmd:
-  - export DOCKER_HOST=tcp://0.0.0.0:2375
-  - [ systemctl, daemon-reload ]
-  - [ systemctl, restart, docker.service ]
+  - sudo sed -i "s/ExecStart=\\/usr\\/bin\\/dockerd/ExecStart=\\/usr\\/bin\\/dockerd -H tcp:\\/\\/0.0.0.0:2375/g" /lib/systemd/system/docker.service
+  - sudo sed -i "s/DOCKER_OPTS=.*/DOCKER_OPTS=\"-H tcp:\\/\\/0.0.0.0:2375\"/g" /etc/init.d/docker
+  - sudo systemctl daemon-reload
+  - sudo systemctl restart docker.service
 `
 
 	request := &compute.CreateInstanceRequest{
