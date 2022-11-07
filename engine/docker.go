@@ -9,7 +9,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io"
-	// "net/http"
+	"net/http"
 
 	docker "github.com/docker/docker/client"
 	"github.com/drone/autoscaler"
@@ -33,15 +33,15 @@ func newDockerClient(server *autoscaler.Server) (docker.APIClient, io.Closer, er
 	}
 	tlsConfig.RootCAs = x509.NewCertPool()
 	tlsConfig.RootCAs.AppendCertsFromPEM(server.CACert)
-	// client := &http.Client{
-	// 	// Transport: &http.Transport{
-	// 	// 	TLSClientConfig: tlsConfig,
-	// 	// },
-	// }
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: tlsConfig,
+		},
+	}
 	dockerClient, err := docker.NewClientWithOpts(
 	   docker.WithAPIVersionNegotiation(),
-	//    docker.WithHTTPClient(client),
-	   docker.WithHost(fmt.Sprintf("http://%s:2375", server.Address)),
+	   docker.WithHTTPClient(client),
+	   docker.WithHost(fmt.Sprintf("https://%s:2376", server.Address)),
 	)
 	return dockerClient, dockerClient, err
 }
