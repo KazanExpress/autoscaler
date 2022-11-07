@@ -89,9 +89,36 @@ func (p *provider) createInstance(
 		metadata["docker-compose"] = p.dockerComposeMetadata
 	}
 	metadata["user-data"] = `#cloud-config
+write_files:
+- path: /etc/systemd/system/docker.service.d/override.conf
+  content: |
+  [Service]
+  ExecStart=
+  ExecStart=/usr/bin/dockerd
+- path: /etc/default/docker
+  content: |
+  DOCKER_OPTS=""
+- path: /etc/docker/daemon.json
+  content: |
+  {
+    "hosts": [ "0.0.0.0:2376", "unix:///var/run/docker.sock" ],
+    "tls": true,
+    "tlsverify": true,
+    "tlscacert": "/etc/docker/ca.pem",
+    "tlscert": "/etc/docker/server-cert.pem",
+    "tlskey": "/etc/docker/server-key.pem"
+  }
+- path: /etc/docker/ca.pem
+  encoding: b64
+  content: {{ .CACert | base64 }}
+- path: /etc/docker/server-cert.pem
+  encoding: b64
+  content: {{ .TLSCert | base64 }}
+- path: /etc/docker/server-key.pem
+  encoding: b64
+  content: {{ .TLSKey | base64 }}
+
 runcmd:
-  - sudo sed -i "s/ExecStart=\\/usr\\/bin\\/dockerd/ExecStart=\\/usr\\/bin\\/dockerd -H tcp:\\/\\/0.0.0.0:2376/g" /lib/systemd/system/docker.service
-  - sudo sed -i "s/DOCKER_OPTS=.*/DOCKER_OPTS=\"-H tcp:\\/\\/0.0.0.0:2376\"/g" /etc/init.d/docker
   - sudo systemctl daemon-reload
   - sudo systemctl restart docker.service
 `
