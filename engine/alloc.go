@@ -95,7 +95,6 @@ func (a *allocator) allocate(ctx context.Context, server *autoscaler.Server) err
 	} else {
 		a.metrics.TrackServerCreateTime(start)
 		logger.WithField("server", server.Name).
-			WithField("opts", opts).
 			Debugln("provisioned server")
 
 		server.State = autoscaler.StateCreated
