@@ -1,6 +1,7 @@
 package yandexcloud
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"math/rand"
@@ -29,7 +30,7 @@ func (p *provider) Create(ctx context.Context, opts autoscaler.InstanceCreateOpt
 		WithField("image", sourceImageID).
 		WithField("name", opts.Name)
 
-	op, err := p.service.WrapOperation(p.createInstance(ctx, sourceImageID, p.folderID, zone, name, p.subnetID))
+	op, err := p.service.WrapOperation(p.createInstance(ctx, sourceImageID, p.folderID, zone, name, p.subnetID, opts))
 	if err != nil {
 		return nil, fmt.Errorf("make wrap operation: %w", err)
 	}
@@ -68,7 +69,7 @@ func (p *provider) Create(ctx context.Context, opts autoscaler.InstanceCreateOpt
 
 func (p *provider) createInstance(
 	ctx context.Context,
-	imageID, folderID, zone, name, subnetID string,
+	imageID, folderID, zone, name, subnetID string, opts autoscaler.InstanceCreateOpts,
 ) (*operation.Operation, error) {
 
 	networkConfig := &compute.PrimaryAddressSpec{}
@@ -88,46 +89,14 @@ func (p *provider) createInstance(
 	if p.dockerComposeMetadata != "" {
 		metadata["docker-compose"] = p.dockerComposeMetadata
 	}
-	metadata["user-data"] = `#cloud-config
-write_files:
-  - path: /etc/systemd/system/docker.service.d/override.conf
-    permissions: '0644'
-    content: |
-    [Service]
-    ExecStart=
-    ExecStart=/usr/bin/dockerd
-  - path: /etc/default/docker
-    permissions: '0644'
-    content: |
-    DOCKER_OPTS=""
-  - path: /etc/docker/daemon.json
-    permissions: '0644'
-    content: |
-    {
-      "hosts": [ "0.0.0.0:2376", "unix:///var/run/docker.sock" ],
-      "tls": true,
-      "tlsverify": true,
-      "tlscacert": "/etc/docker/ca.pem",
-      "tlscert": "/etc/docker/server-cert.pem",
-      "tlskey": "/etc/docker/server-key.pem"
-    }
-  - path: /etc/docker/ca.pem
-    permissions: '0644'
-    encoding: b64
-    content: {{ .CACert | base64 }}
-  - path: /etc/docker/server-cert.pem
-    permissions: '0644'
-    encoding: b64
-    content: {{ .TLSCert | base64 }}
-  - path: /etc/docker/server-key.pem
-    permissions: '0644'
-    encoding: b64
-    content: {{ .TLSKey | base64 }}
 
-runcmd:
-  - sudo systemctl daemon-reload
-  - sudo systemctl restart docker.service
-`
+	var buf = &bytes.Buffer{}
+	err := userdataT.Execute(buf, opts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to template: %w", err)
+	}
+
+	metadata["user-data"] = buf.String()
 
 	request := &compute.CreateInstanceRequest{
 		FolderId:   folderID,
