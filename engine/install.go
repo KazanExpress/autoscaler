@@ -170,6 +170,7 @@ poller:
 		fmt.Sprintf("DRONE_RPC_SECRET=%s", i.secret),
 		fmt.Sprintf("DRONE_RUNNER_CAPACITY=%v", instance.Capacity),
 		fmt.Sprintf("DRONE_RUNNER_NAME=%s", instance.Name),
+		fmt.Sprintf("DRONE_RUNNER_CLONE_IMAGE=%s", "docker.infra.cluster.kznexpess.com/drone/git"),
 	)
 
 	if s := i.runner.Volumes; s != "" {
